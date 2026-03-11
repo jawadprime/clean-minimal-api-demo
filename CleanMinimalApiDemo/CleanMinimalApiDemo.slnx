@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="../Application/Application.csproj" Id="795694b5-e976-4959-8e61-48a8a40dc65e" />
+  <Project Path="../Common/Common.csproj" Id="dd0c2117-e3e4-4d76-be44-b4e239e34f04" />
   <Project Path="../Domain/Domain.csproj" Id="ffd79b65-6f3e-4f0d-bb45-11dc72c3bde1" />
   <Project Path="../Infrastructure/Infrastructure.csproj" Id="c9b0773f-de46-453e-8518-a1b57fa3e336" />
   <Project Path="MinimalApi.csproj" />
