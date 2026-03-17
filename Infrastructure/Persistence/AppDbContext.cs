@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
-internal class AppDbContext : DbContext
+public class AppDbContext : DbContext
 {
-    public DbSet<ProductEntity> Products => Set<ProductEntity>();
+    internal DbSet<ProductEntity> Products => Set<ProductEntity>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
