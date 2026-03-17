@@ -11,10 +11,15 @@ public static class ProductsEndpoints
             .MapGroup("/api/v1/products")
             .WithTags("Products");
 
-        group.MapPost("/", AddProduct)
+        group.MapGet("/{id}", GetProductById)
+            .WithName("GetProductById")
+            .Produces<GetProductByIdResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
+
+        group.MapPost("/Add", AddProduct)
             .WithName("AddProduct")
             .Produces<AddProductResponse>(StatusCodes.Status201Created)
-            .ProducesValidationProblem();
+            .Produces(StatusCodes.Status400BadRequest);
 
         return group;
     }
@@ -27,6 +32,17 @@ public static class ProductsEndpoints
         var result = await orchestrator.AddProduct(request.ToDomain(), cancellationToken);
 
         var apiResponse = result.ToApiResponse(AddProductResponse.FromDomain);
+        return apiResponse;
+    }
+
+    private static async Task<IResult> GetProductById(
+        Guid id,
+        IProductOrchestrator orchestrator,
+        CancellationToken cancellationToken)
+    {
+        var result = await orchestrator.GetProductById(id, cancellationToken);
+
+        var apiResponse = result.ToApiResponse(GetProductByIdResponse.FromDomain);
         return apiResponse;
     }
 }
