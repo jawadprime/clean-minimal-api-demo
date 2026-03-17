@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # HTTPS certificate
-COPY MinimalApi/certs/localhost.pfx /app/localhost.pfx
+COPY MinimalApi/Certs/localhost.pfx /app/localhost.pfx
 
 # Kestrel settings for HTTP + HTTPS
 ENV DOTNET_RUNNING_IN_CONTAINER=true
