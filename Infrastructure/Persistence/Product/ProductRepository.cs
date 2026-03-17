@@ -3,17 +3,20 @@ using Common.Errors;
 using Common.Results;
 using Infrastructure.Persistence.Common;
 using Infrastructure.Persistence.Product;
+using Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories;
 
-internal class ProductRepository : IProductRepository
+public class ProductRepository : IProductRepository
 {
     private readonly Repository<ProductEntity> _repo;
+    private readonly IAppLogger<ProductRepository> _logger;
 
-    public ProductRepository(AppDbContext context)
+    public ProductRepository(AppDbContext context, IAppLogger<ProductRepository> logger)
     {
         _repo = new Repository<ProductEntity>(context);
+        _logger = logger;
     }
 
     public async Task<Result<Domain.Product>> GetById(Guid id, CancellationToken cancellationToken)
@@ -23,7 +26,7 @@ internal class ProductRepository : IProductRepository
         if (entity is null)
         {
             return new(
-                new NotFoundError([$"Product not found with Id : {id}"], new NoException())
+                new NotFoundError([$"Product not found. ProductId: {id}."], new NoException())
             );
         }
 
@@ -42,6 +45,8 @@ internal class ProductRepository : IProductRepository
         }
         catch (Exception ex)
         {
+            _logger.Error($"Error while persisting product. ProductId: {product.Id}", ex);
+
             return new(
                 new UnexpectedError([ex.Message],new HasException(ex))
             );
@@ -58,6 +63,8 @@ internal class ProductRepository : IProductRepository
         }
         catch (Exception ex)
         {
+            _logger.Error("Error while fetching all products", ex);
+
             return new(
                 new UnexpectedError([ex.Message], new HasException(ex))
             );

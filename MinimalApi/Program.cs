@@ -1,5 +1,3 @@
-using ApiPresentation;
-using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using MinimalApi.Bootstrap;

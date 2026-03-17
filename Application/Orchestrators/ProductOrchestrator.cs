@@ -1,6 +1,7 @@
 ﻿using Application.Repositories;
 using Common.Results;
 using Domain;
+using Logging;
 
 namespace Application.Orchestrators;
 
@@ -13,10 +14,12 @@ public interface IProductOrchestrator
 public class ProductOrchestrator : IProductOrchestrator
 {
     private readonly IProductRepository _productRepo;
+    private readonly IAppLogger<ProductOrchestrator> _logger;
 
-    public ProductOrchestrator(IProductRepository repository)
+    public ProductOrchestrator(IProductRepository repository, IAppLogger<ProductOrchestrator> logger)
     {
         _productRepo = repository;
+        _logger = logger;
     }
 
     public async Task<Result<Product>> GetProductById(Guid id, CancellationToken ct)
@@ -28,8 +31,11 @@ public class ProductOrchestrator : IProductOrchestrator
 
     public async Task<Result<Product>> AddProduct(Product product, CancellationToken ct)
     {
-        var createdProduct = await _productRepo.Add(product, ct);
+        var addProductResult = await _productRepo.Add(product, ct);
 
-        return createdProduct;
+        if (addProductResult.IsSuccess)
+            _logger.Information($"Product successfuly added. ProductId: {addProductResult.Value.Id}");
+
+        return addProductResult;
     }
 }
