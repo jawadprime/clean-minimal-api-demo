@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using MinimalApi.V1.Common;
 using FluentValidation;
+using Logging;
 
 namespace MinimalApi.Middlewares;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IAppLogger<GlobalExceptionHandler> _logger;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(IAppLogger<GlobalExceptionHandler> logger)
     {
         _logger = logger;
     }
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler : IExceptionHandler
                 break;
         }
 
-        _logger.LogError(exception, "Unhandled exception occurred.");
+        _logger.Error("Unhandled exception occurred.", exception);
 
         httpContext.Response.StatusCode = statusCode;
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
