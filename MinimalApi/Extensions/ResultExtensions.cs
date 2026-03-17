@@ -1,6 +1,6 @@
 ﻿using Common.Errors;
 using Common.Results;
-using Microsoft.AspNetCore.Mvc;
+using MinimalApi.V1.Common;
 
 namespace MinimalApi.Extensions;
 
@@ -20,21 +20,11 @@ public static class ResultExtensions
         {
             NotFoundError e => Results.NotFound(CreateProblem(e)),
             ValidationError e => Results.BadRequest(CreateProblem(e)),
-            UnexpectedError e => Results.Problem(
-                title: e.Title,
-                detail: string.Join(", ", e.Failures),
-                statusCode: StatusCodes.Status500InternalServerError
-            ),
-            _ => Results.Problem(statusCode: 500)
+            UnexpectedError e => Results.InternalServerError(CreateProblem(e)),
+            _ => throw new NotImplementedException($"Error mapping is not handled for {result.Error.GetType()}")
         };
     }
 
-    private static ProblemDetails CreateProblem(HasError error)
-    {
-        return new ProblemDetails
-        {
-            Title = error.Title,
-            Detail = string.Join(", ", error.Failures)
-        };
-    }
+    private static ProblemDetailsResponse CreateProblem(HasError error)
+        => new ProblemDetailsResponse(error.Title, string.Join(", ", error.Failures));
 }
