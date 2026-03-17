@@ -9,6 +9,7 @@
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
+
   <ItemGroup>
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
 		<PrivateAssets>all</PrivateAssets>
@@ -22,6 +23,7 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Logging\Logging.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

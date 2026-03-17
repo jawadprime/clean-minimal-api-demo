@@ -2,15 +2,14 @@ using ApiPresentation;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using MinimalApi.Bootstrap;
 using MinimalApi.V1.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Logging.ClearProviders();
 
-builder.Services
-    .AddInfrastructure(builder.Configuration)
-    .AddApplication(builder.Configuration);
+builder.Services.RegisterServices(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
