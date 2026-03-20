@@ -30,7 +30,7 @@ public class ProductRepository : IProductRepository
             );
         }
 
-        return new(entity.ToDomain());
+        return entity.ToDomain();
     }
 
     public async Task<Result<Domain.Product>> Add(Domain.Product product, CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ public class ProductRepository : IProductRepository
 
             await _repo.AddAsync(entity);
 
-            return new(entity.ToDomain());
+            return entity.ToDomain();
         }
         catch (Exception ex)
         {
@@ -58,7 +58,7 @@ public class ProductRepository : IProductRepository
         try
         {
             var entities = await _repo.GetAll().ToListAsync();
-            var products = entities.Select(e => e.ToDomain()).ToList();
+            var products = entities.Select(e => e.ToDomain().Value).ToList();
             return new(products);
         }
         catch (Exception ex)

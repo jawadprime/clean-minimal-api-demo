@@ -1,8 +1,12 @@
-﻿namespace Infrastructure.Persistence.Product;
+﻿using Common.Results;
+using Domain;
+
+namespace Infrastructure.Persistence.Product;
 internal record ProductEntity (Guid Id, string Name, DateTime CreatedAt)
 {
-    public Domain.Product ToDomain() => new Domain.Product(Id, Name, CreatedAt);
+    public Result<Domain.Product> ToDomain() 
+        => Domain.Product.Create(new(new HasProductId(Id), new(Name), new HasProductCreatedAt(CreatedAt)));
 
     public static ProductEntity FromDomain(Domain.Product domain)
-        => new ProductEntity(domain.Id, domain.Name, domain.CreatedAt);
+        => new ProductEntity(new Guid(), domain.Name.Value, DateTime.UtcNow);
 }

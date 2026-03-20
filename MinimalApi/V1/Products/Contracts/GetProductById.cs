@@ -6,6 +6,6 @@ public record GetProductByIdResponse(Guid Id, string Name, DateTime CreatedAt)
 {
     public static AddProductResponse FromDomain(Product product)
     {
-        return new(product.Id, product.Name, product.CreatedAt);
+        return new(((HasProductId)product.Id).Value, product.Name.Value, ((HasProductCreatedAt)product.CreatedAt).Value);
     }
 }

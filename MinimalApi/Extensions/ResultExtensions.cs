@@ -6,15 +6,9 @@ namespace MinimalApi.Extensions;
 
 public static class ResultExtensions
 {
-    public static IResult ToApiResponse<TDomain, TResponse>(
-        this Result<TDomain> result,
-        Func<TDomain, TResponse> map)
+    public static IResult ToProblemResult<TDomain>(this Result<TDomain> result)
     {
-        if (result.IsSuccess)
-        {
-            var responseData = map(result.Value);
-            return Results.Ok(responseData);
-        }
+        if (result is null) throw new ArgumentNullException(nameof(result));
 
         return result.Error switch
         {
@@ -23,6 +17,17 @@ public static class ResultExtensions
             UnexpectedError e => Results.InternalServerError(CreateProblem(e)),
             _ => throw new NotImplementedException($"Error mapping is not handled for {result.Error.GetType()}")
         };
+    }
+
+    public static IResult ToActionResult<TDomain, TResponse>(
+        this Result<TDomain> result,
+        Func<TDomain, TResponse> map)
+    {
+        if (result is null) throw new ArgumentNullException(nameof(result));
+
+        return result.IsSuccess
+            ? Results.Ok(map(result.Value))
+            : result.ToProblemResult();
     }
 
     private static ProblemDetailsResponse CreateProblem(HasError error)

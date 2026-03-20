@@ -1,4 +1,5 @@
 ﻿using Application.Orchestrators;
+using Domain;
 using MinimalApi.Extensions;
 using MinimalApi.V1.Products.Contracts;
 
@@ -29,9 +30,14 @@ public static class ProductsEndpoints
     IProductOrchestrator orchestrator,
     CancellationToken cancellationToken)
     {
-        var result = await orchestrator.AddProduct(request.ToDomain(), cancellationToken);
+        var domainMappingResult = Product.Create(request.ToDomainArguments());
 
-        var apiResponse = result.ToApiResponse(AddProductResponse.FromDomain);
+        if (domainMappingResult.IsFailure)
+            return domainMappingResult.ToProblemResult();
+
+        var result = await orchestrator.AddProduct(domainMappingResult.Value, cancellationToken);
+
+        var apiResponse = result.ToActionResult(AddProductResponse.FromDomain);
         return apiResponse;
     }
 
@@ -42,7 +48,7 @@ public static class ProductsEndpoints
     {
         var result = await orchestrator.GetProductById(id, cancellationToken);
 
-        var apiResponse = result.ToApiResponse(GetProductByIdResponse.FromDomain);
+        var apiResponse = result.ToActionResult(GetProductByIdResponse.FromDomain);
         return apiResponse;
     }
 }
