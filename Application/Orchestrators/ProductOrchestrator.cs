@@ -8,7 +8,7 @@ namespace Application.Orchestrators;
 public interface IProductOrchestrator 
 {
     public Task<Result<Product>> AddProduct(Product product, CancellationToken cancellationToken);
-    public Task<Result<Product>> GetProductById(Guid id, CancellationToken cancellationToken);
+    public Task<Result<Product>> GetProductById(HasProductId id, CancellationToken cancellationToken);
 }
 
 public class ProductOrchestrator : IProductOrchestrator
@@ -22,7 +22,7 @@ public class ProductOrchestrator : IProductOrchestrator
         _logger = logger;
     }
 
-    public async Task<Result<Product>> GetProductById(Guid id, CancellationToken ct)
+    public async Task<Result<Product>> GetProductById(HasProductId id, CancellationToken ct)
     {
         var product = await _productRepo.GetById(id, ct);
 

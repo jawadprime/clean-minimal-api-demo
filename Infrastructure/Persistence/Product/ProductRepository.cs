@@ -1,6 +1,7 @@
 ﻿using Application.Repositories;
 using Common.Errors;
 using Common.Results;
+using Domain;
 using Infrastructure.Persistence.Common;
 using Infrastructure.Persistence.Product;
 using Logging;
@@ -19,9 +20,9 @@ public class ProductRepository : IProductRepository
         _logger = logger;
     }
 
-    public async Task<Result<Domain.Product>> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<Domain.Product>> GetById(HasProductId id, CancellationToken cancellationToken)
     {
-        var entity = await _repo.FindOneAsync(p => p.Id == id);
+        var entity = await _repo.FindOneAsync(p => p.Id == id.Value);
 
         if (entity is null)
         {

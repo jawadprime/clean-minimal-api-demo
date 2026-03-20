@@ -46,7 +46,7 @@ public static class ProductsEndpoints
         IProductOrchestrator orchestrator,
         CancellationToken cancellationToken)
     {
-        var result = await orchestrator.GetProductById(id, cancellationToken);
+        var result = await orchestrator.GetProductById(new HasProductId(id), cancellationToken);
 
         var apiResponse = result.ToActionResult(GetProductByIdResponse.FromDomain);
         return apiResponse;
