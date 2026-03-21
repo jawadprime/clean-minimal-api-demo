@@ -51,7 +51,7 @@ public static partial class DependencyInjection
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductRepository, ProductsRepository>();
 
         return services;
     }

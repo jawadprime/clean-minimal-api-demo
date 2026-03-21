@@ -30,6 +30,6 @@ public static class ResultExtensions
             : result.ToProblemResult();
     }
 
-    private static ProblemDetailsResponse CreateProblem(HasError error)
-        => new ProblemDetailsResponse(error.Title, string.Join(", ", error.Failures));
+    private static ProblemInfo CreateProblem(HasError error)
+        => new ProblemInfo(error.Title, string.Join(", ", error.Failures));
 }

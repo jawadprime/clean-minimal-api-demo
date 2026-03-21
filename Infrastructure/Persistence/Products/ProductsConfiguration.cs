@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Product;
 
-internal class ProductConfiguration : IEntityTypeConfiguration<ProductEntity>
+internal class ProductsConfiguration : IEntityTypeConfiguration<ProductsDbModel>
 {
-    public void Configure(EntityTypeBuilder<ProductEntity> builder)
+    public void Configure(EntityTypeBuilder<ProductsDbModel> builder)
     {
         builder.ToTable("products");
 

@@ -5,7 +5,7 @@ namespace Infrastructure.Persistence;
 
 public class AppDbContext : DbContext
 {
-    internal DbSet<ProductEntity> Products => Set<ProductEntity>();
+    internal DbSet<ProductsDbModel> Products => Set<ProductsDbModel>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)

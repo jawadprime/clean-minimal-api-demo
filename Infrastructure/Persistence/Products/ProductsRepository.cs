@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class ProductRepository : IProductRepository
+public class ProductsRepository : IProductRepository
 {
-    private readonly Repository<ProductEntity> _repo;
-    private readonly IAppLogger<ProductRepository> _logger;
+    private readonly Repository<ProductsDbModel> _repo;
+    private readonly IAppLogger<ProductsRepository> _logger;
 
-    public ProductRepository(AppDbContext context, IAppLogger<ProductRepository> logger)
+    public ProductsRepository(AppDbContext context, IAppLogger<ProductsRepository> logger)
     {
-        _repo = new Repository<ProductEntity>(context);
+        _repo = new Repository<ProductsDbModel>(context);
         _logger = logger;
     }
 
@@ -38,7 +38,7 @@ public class ProductRepository : IProductRepository
     {
         try
         {
-            var entity = ProductEntity.FromDomain(product);
+            var entity = ProductsDbModel.FromDomain(product);
 
             await _repo.AddAsync(entity);
 

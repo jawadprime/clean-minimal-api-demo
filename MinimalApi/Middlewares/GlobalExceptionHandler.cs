@@ -19,14 +19,14 @@ public class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        ProblemDetailsResponse response;
+        ProblemInfo response;
         var statusCode = StatusCodes.Status500InternalServerError;
 
         switch (exception)
         {
             case BadHttpRequestException:
                 statusCode = StatusCodes.Status400BadRequest;
-                response = new ProblemDetailsResponse(
+                response = new ProblemInfo(
                     "Bad Request",
                     "The request could not be processed. Please check your input."
                 );
@@ -34,14 +34,14 @@ public class GlobalExceptionHandler : IExceptionHandler
 
             case ValidationException validationEx:
                 statusCode = StatusCodes.Status400BadRequest;
-                response = new ProblemDetailsResponse(
+                response = new ProblemInfo(
                     "Validation Failed",
                     string.Join("; ", validationEx.Errors.Select(e => e.ErrorMessage))
                 );
                 break;
 
             default:
-                response = new ProblemDetailsResponse(
+                response = new ProblemInfo(
                     "Unexpected Error",
                     "An unexpected error occurred. Please contact support if it persists."
                 );
