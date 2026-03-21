@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Logging;
+using Microsoft.AspNetCore.Diagnostics;
 using MinimalApi.V1.Common;
-using FluentValidation;
-using Logging;
 
 namespace MinimalApi.Middlewares;
 
@@ -24,19 +23,16 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         switch (exception)
         {
-            case BadHttpRequestException:
+            case BadHttpRequestException badHttpRequestEx:
                 statusCode = StatusCodes.Status400BadRequest;
+
+                var exceptiondetails = badHttpRequestEx.InnerException != null
+                   ? $"{badHttpRequestEx.Message} Details: {badHttpRequestEx.InnerException.Message}"
+                   : badHttpRequestEx.Message;
+
                 response = new ProblemInfo(
                     "Bad Request",
-                    "The request could not be processed. Please check your input."
-                );
-                break;
-
-            case ValidationException validationEx:
-                statusCode = StatusCodes.Status400BadRequest;
-                response = new ProblemInfo(
-                    "Validation Failed",
-                    string.Join("; ", validationEx.Errors.Select(e => e.ErrorMessage))
+                     exceptiondetails
                 );
                 break;
 
