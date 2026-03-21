@@ -8,7 +8,10 @@ public static class ResultExtensions
 {
     public static IResult ToProblemResult<TDomain>(this Result<TDomain> result)
     {
-        if (result is null) throw new ArgumentNullException(nameof(result));
+        if (result is null)
+            throw new ArgumentNullException(
+                nameof(result),
+                "Result cannot be null when converting to an action result.");
 
         return result.Error switch
         {
@@ -23,7 +26,15 @@ public static class ResultExtensions
         this Result<TDomain> result,
         Func<TDomain, TResponse> map)
     {
-        if (result is null) throw new ArgumentNullException(nameof(result));
+        if (result is null)
+            throw new ArgumentNullException(
+                nameof(result),
+                "Result cannot be null when converting to an action result.");
+
+        if (map is null)
+            throw new ArgumentNullException(
+                nameof(map),
+                "Mapping function cannot be null when transforming domain to response.");
 
         return result.IsSuccess
             ? Results.Ok(map(result.Value))
