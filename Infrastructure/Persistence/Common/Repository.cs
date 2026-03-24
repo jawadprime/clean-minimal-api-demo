@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Persistence.Common;
 
-internal class Repository<TEntity> where TEntity : class
+public class Repository<TEntity> where TEntity : BaseEntity
 {
     private readonly AppDbContext _context;
     private readonly DbSet<TEntity> _set;
@@ -15,53 +15,62 @@ internal class Repository<TEntity> where TEntity : class
         _set = context.Set<TEntity>();
     }
 
-    public IQueryable<TEntity> GetAll(FindOptions? options = null)
+    public IQueryable<TEntity> GetAll(FindOptions? options = default)
         => ApplyOptions(options);
 
     public IQueryable<TEntity> Find(
         Expression<Func<TEntity, bool>> predicate,
-        FindOptions? options = null)
+        CancellationToken cancellationToken = default,
+        FindOptions? options = default)
         => ApplyOptions(options).Where(predicate);
 
     public async Task<TEntity?> FindOneAsync(
         Expression<Func<TEntity, bool>> predicate,
-        FindOptions? options = null)
-        => await ApplyOptions(options).FirstOrDefaultAsync(predicate);
+        CancellationToken cancellationToken = default,
+        FindOptions? options = default)
+        => await ApplyOptions(options).FirstOrDefaultAsync(predicate, cancellationToken);
 
-    public async Task AddAsync(TEntity entity)
+    public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        await _set.AddAsync(entity);
-        await _context.SaveChangesAsync();
+        await _set.AddAsync(entity, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task AddManyAsync(IEnumerable<TEntity> entities)
+    public async Task AddManyAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        await _set.AddRangeAsync(entities);
-        await _context.SaveChangesAsync();
+        await _set.AddRangeAsync(entities, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(TEntity entity)
+    public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _set.Update(entity);
-        await _context.SaveChangesAsync();
+        var tracked = _context.ChangeTracker.Entries<TEntity>()
+                      .FirstOrDefault(e => e.Entity == entity);
+
+        if (tracked == null)
+            _context.Attach(entity);
+
+        _context.Entry(entity).State = EntityState.Modified;
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(TEntity entity)
+    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         _set.Remove(entity);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteManyAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task DeleteManyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        await _set.Where(predicate).ExecuteDeleteAsync();
+        await _set.Where(predicate).ExecuteDeleteAsync(cancellationToken);
     }
 
-    public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
-        => _set.AnyAsync(predicate);
+    public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        => _set.AnyAsync(predicate, cancellationToken);
 
-    public Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
-        => _set.CountAsync(predicate);
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        => _set.CountAsync(predicate, cancellationToken);
 
     private IQueryable<TEntity> ApplyOptions(FindOptions? options)
     {
