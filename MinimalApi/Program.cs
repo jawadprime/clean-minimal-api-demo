@@ -16,7 +16,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-app.UseExceptionHandler();
+app.UseExceptionHandler(options => { });
 
 using (var scope = app.Services.CreateScope())
 {
