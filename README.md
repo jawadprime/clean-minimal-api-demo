@@ -69,11 +69,12 @@ http://localhost:5000
 
 ```
 src/
-├── Application/         # Business logic, use cases, services
-├── Domain/              # Entities, value objects, aggregates, domain events
-├── Infrastructure/      # DB context, repositories, logging, external services
-├── API/                 # Minimal API endpoints
-├── Shared/              # Common helpers, result types, wrapper types
+├── Application/         # Business logic, use cases, orchestrators
+├── Domain/              # Entities, aggregates, domain errors, wrapper types
+├── Infrastructure/      # DB context, repositories, and external services
+├── MinimalApi/          # Minimal API endpoints with versioning
+├── Common/              # result & error envelops
+├── Logging/             # serilog wrapper with AppInsights as a primary sink
 docker-compose.yml       # Docker setup
 .env                     # Environment variables
 ```
@@ -93,12 +94,9 @@ docker-compose.yml       # Docker setup
 
 ## Logging
 
-- Integrated with **Serilog**  
-- Can optionally push logs to **Application Insights**  
+Logging is implemented using **Serilog**, with **Application Insights** as the primary sink (configurable as needed).
 
-```csharp
-Log.Information("Application started successfully");
-```
+A simple wrapper over Serilog is provided for easier and consistent usage across the application.
 
 ---
 
@@ -106,10 +104,3 @@ Log.Information("Application started successfully");
 
 Contributions are welcome!  
 Please open issues or pull requests for bug fixes, enhancements, or new features.
-
----
-
-## License
-
-This project is licensed under the **MIT License**.
-
